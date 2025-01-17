@@ -25,4 +25,11 @@ public class EventController {
         Event event = eventService.updateEvent(id, eventRequest);
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_EVENTPLANNER')")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
