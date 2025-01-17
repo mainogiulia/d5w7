@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,16 +31,16 @@ public class BookingService {
     public Booking createBooking(BookingRequest bookingRequest) {
         Event event = eventRepo.findById(bookingRequest.getEventId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
-        if (event.getAvailablePlaces() < bookingRequest.getAvailablePlaces()) {
+        if (event.getAvailablePlaces() < bookingRequest.getPlacesToBook()) {
             throw new SoldOutException("No more places available for this event");
         }
         Booking booking = new Booking();
         booking.setEvent(event);
         booking.setUser(getLoggedInUser());
         booking.setBookingDate(LocalDate.now());
-        booking.setNumOfPlaces(bookingRequest.getAvailablePlaces());
+        booking.setNumOfPlaces(bookingRequest.getPlacesToBook());
 
-        event.setAvailablePlaces(event.getAvailablePlaces() - bookingRequest.getAvailablePlaces());
+        event.setAvailablePlaces(event.getAvailablePlaces() - bookingRequest.getPlacesToBook());
 
         eventRepo.save(event);
         return bookingRepo.save(booking);
@@ -56,5 +57,10 @@ public class BookingService {
         }
 
         bookingRepo.delete(booking);
+    }
+
+    public List<Booking> getUserBookings() {
+        AppUser loggedInUser = getLoggedInUser();
+        return bookingRepo.findByUserId(loggedInUser.getId());
     }
 }
