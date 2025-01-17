@@ -22,7 +22,7 @@ public class BookingService {
     private final EventRepo eventRepo;
     private final AppUserRepository appUserRepository;
 
-    private AppUser getLoggedInUser() {
+    private AppUser getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -36,7 +36,7 @@ public class BookingService {
         }
         Booking booking = new Booking();
         booking.setEvent(event);
-        booking.setUser(getLoggedInUser());
+        booking.setUser(getCurrentUser());
         booking.setBookingDate(LocalDate.now());
         booking.setNumOfPlaces(bookingRequest.getPlacesToBook());
 
@@ -50,7 +50,7 @@ public class BookingService {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
 
-        AppUser loggedInUser = getLoggedInUser();
+        AppUser loggedInUser = getCurrentUser();
 
         if (!booking.getUser().getId().equals(loggedInUser.getId())) {
             throw new UnauthorizedOperationException("You are not authorized to delete this booking");
@@ -60,7 +60,7 @@ public class BookingService {
     }
 
     public List<Booking> getUserBookings() {
-        AppUser loggedInUser = getLoggedInUser();
+        AppUser loggedInUser = getCurrentUser();
         return bookingRepo.findByUserId(loggedInUser.getId());
     }
 }

@@ -16,7 +16,7 @@ public class EventService {
     private final EventRepo eventRepo;
     private final AppUserRepository appUserRepository;
 
-    private AppUser getLoggedInUser() {
+    private AppUser getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -45,7 +45,7 @@ public class EventService {
         Event event = eventRepo.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        AppUser loggedInUser = getLoggedInUser();
+        AppUser loggedInUser = getCurrentUser();
 
         if (!event.getEventPlanner().getId().equals(loggedInUser.getId())) {
             throw new UnauthorizedOperationException("You are not authorized to delete this event");
