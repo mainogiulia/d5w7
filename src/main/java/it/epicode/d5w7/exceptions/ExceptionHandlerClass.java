@@ -36,4 +36,19 @@ public class ExceptionHandlerClass {
     protected ResponseEntity<Object> userNotFoundError(UserNotFoundException e) {
         return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = BookingNotFoundException.class)
+    protected ResponseEntity<Object> bookingNotFoundError(BookingNotFoundException e) {
+        return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = SoldOutException.class)
+    protected ResponseEntity<Object> soldOutError(SoldOutException e) {
+        return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnauthorizedOperationException.class)
+    protected ResponseEntity<Object> unauthorizedError(UnauthorizedOperationException e) {
+        return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
